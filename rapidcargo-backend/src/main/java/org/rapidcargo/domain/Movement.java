@@ -57,4 +57,59 @@ public abstract class Movement {
         }
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getMovementTime() {
+        return movementTime;
+    }
+
+    public void setMovementTime(LocalDateTime movementTime) {
+        this.movementTime = movementTime;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getDeclaredInCode() {
+        return declaredInCode;
+    }
+
+    public String getGetDeclaredInLabel() {
+        return getDeclaredInLabel;
+    }
+
+    public Goods getGoods() {
+        return goods;
+    }
+
+    public void setGoods(Goods goods) {
+        this.goods = goods;
+    }
+
+    public CustomsStatus getCustomsStatus() {
+        return customsStatus;
+    }
+
+    public void setCustomsStatus(CustomsStatus customsStatus) {
+        this.customsStatus = customsStatus;
+    }
 }

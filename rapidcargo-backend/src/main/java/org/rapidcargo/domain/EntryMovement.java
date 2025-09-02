@@ -23,7 +23,7 @@ public class EntryMovement extends Movement {
 
     @Override
     public MovementType getType() {
-        return null;
+        return MovementType.ENTRY;
     }
 
     @Override
