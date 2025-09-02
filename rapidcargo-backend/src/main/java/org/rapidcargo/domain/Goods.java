@@ -1,6 +1,7 @@
 package org.rapidcargo.domain;
 
 import org.rapidcargo.domain.enums.ReferenceType;
+import org.rapidcargo.domain.exception.BusinessException;
 
 import java.math.BigDecimal;
 
@@ -27,6 +28,50 @@ public class Goods {
         this.totalRefQuantity = totalRefQuantity;
         this.totalRefWeight = totalRefWeight;
         this.description = description;
+    }
+
+    public void validate() {
+        validateRequiredFields();
+        validateAwbFormat();
+        validateQuantityAndWeight();
+    }
+
+    private void validateRequiredFields() {
+        if (referenceType == null) {
+            throw new BusinessException("Le type de référence est obligatoire");
+        }
+        if (referenceCode == null || referenceCode.trim().isEmpty()) {
+            throw new BusinessException("Le code de référence est obligatoire");
+        }
+        if (quantity == null || quantity <= 0) {
+            throw new BusinessException("La quantité doit être positive");
+        }
+        if (weight == null || weight.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException("Le poids doit être positif");
+        }
+        if (totalRefQuantity == null || totalRefQuantity <= 0) {
+            throw new BusinessException("La quantité totale de référence doit être positive");
+        }
+        if (totalRefWeight == null || totalRefWeight.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException("Le poids total de référence doit être positif");
+        }
+    }
+
+    private void validateAwbFormat() {
+        if (referenceType == ReferenceType.AWB) {
+            if (!referenceCode.matches("\\d{11}")) {
+                throw new BusinessException("La référence AWB doit contenir exactement 11 chiffres");
+            }
+        }
+    }
+
+    private void validateQuantityAndWeight() {
+        if (totalRefQuantity < quantity) {
+            throw new BusinessException("La quantité totale de référence doit être >= à la quantité du mouvement");
+        }
+        if (totalRefWeight.compareTo(weight) < 0) {
+            throw new BusinessException("Le poids total de référence doit être >= au poids du mouvement");
+        }
     }
 
     public ReferenceType getReferenceType() {
