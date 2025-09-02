@@ -3,22 +3,12 @@ package org.rapidcargo.domain;
 import org.rapidcargo.domain.enums.MovementType;
 import org.rapidcargo.domain.exception.BusinessException;
 
-import java.time.LocalDateTime;
-
 public class EntryMovement extends Movement {
     private String fromWarehouseCode;
     private String fromWarehouseLabel;
 
     public EntryMovement() {
         super();
-    }
-
-    public EntryMovement(Long id, LocalDateTime movementTime,
-                         String createdBy, LocalDateTime createdAt,
-                         String fromWarehouseCode, String fromWarehouseLabel) {
-        super(id, movementTime, createdBy, createdAt);
-        this.fromWarehouseCode = fromWarehouseCode;
-        this.fromWarehouseLabel = fromWarehouseLabel;
     }
 
     @Override
