@@ -3,7 +3,7 @@ package org.rapidcargo.repository.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import org.rapidcargo.domain.enums.MovementType;
+import org.rapidcargo.enums.MovementType;
 
 @Entity
 @DiscriminatorValue("ENTRY")

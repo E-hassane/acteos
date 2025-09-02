@@ -1,8 +1,8 @@
 package org.rapidcargo.service;
 
-import org.rapidcargo.domain.Goods;
-import org.rapidcargo.domain.Movement;
-import org.rapidcargo.domain.exception.BusinessException;
+import org.rapidcargo.Goods;
+import org.rapidcargo.Movement;
+import org.rapidcargo.exception.BusinessException;
 import org.rapidcargo.repository.MovementRepository;
 import org.rapidcargo.repository.entity.MovementEntity;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package org.rapidcargo.domain.enums;
+package org.rapidcargo.enums;
 
 public enum ReferenceType {
     AWB("AWB"),

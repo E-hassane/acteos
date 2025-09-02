@@ -1,9 +1,9 @@
 package org.rapidcargo.service;
 
-import org.rapidcargo.domain.EntryMovement;
-import org.rapidcargo.domain.ExitMovement;
-import org.rapidcargo.domain.Movement;
-import org.rapidcargo.domain.exception.BusinessException;
+import org.rapidcargo.EntryMovement;
+import org.rapidcargo.ExitMovement;
+import org.rapidcargo.Movement;
+import org.rapidcargo.exception.BusinessException;
 import org.rapidcargo.mapper.EntityMapper;
 import org.rapidcargo.repository.MovementRepository;
 import org.rapidcargo.repository.entity.MovementEntity;

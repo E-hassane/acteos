@@ -1,8 +1,8 @@
-package org.rapidcargo.domain;
+package org.rapidcargo;
 
-import org.rapidcargo.domain.enums.CustomsStatus;
-import org.rapidcargo.domain.enums.MovementType;
-import org.rapidcargo.domain.exception.BusinessException;
+import org.rapidcargo.enums.CustomsStatus;
+import org.rapidcargo.enums.MovementType;
+import org.rapidcargo.exception.BusinessException;
 
 import java.time.LocalDateTime;
 

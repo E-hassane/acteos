@@ -1,9 +1,9 @@
 package org.rapidcargo.repository.entity;
 
 import jakarta.persistence.*;
-import org.rapidcargo.domain.enums.CustomsStatus;
-import org.rapidcargo.domain.enums.MovementType;
-import org.rapidcargo.domain.enums.ReferenceType;
+import org.rapidcargo.enums.CustomsStatus;
+import org.rapidcargo.enums.MovementType;
+import org.rapidcargo.enums.ReferenceType;
 
 import java.time.LocalDate;
 

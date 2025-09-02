@@ -1,4 +1,4 @@
-package org.rapidcargo.domain.exception;
+package org.rapidcargo.exception;
 
 public class BusinessException extends RuntimeException {
     public BusinessException(String message) {

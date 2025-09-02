@@ -1,9 +1,8 @@
-package org.rapidcargo.domain;
+package org.rapidcargo;
 
-import org.rapidcargo.domain.enums.MovementType;
-import org.rapidcargo.domain.exception.BusinessException;
+import org.rapidcargo.enums.MovementType;
+import org.rapidcargo.exception.BusinessException;
 
-import java.time.LocalDateTime;
 
 public class ExitMovement extends Movement {
     private String toWarehouseCode;
@@ -15,16 +14,6 @@ public class ExitMovement extends Movement {
         super();
     }
 
-    public ExitMovement(Long id, LocalDateTime movementTime,
-                        String createdBy, LocalDateTime createdAt,
-                        String toWarehouseCode, String toWarehouseLabel,
-                        String customsDocumentType, String customsDocumentRef) {
-        super(id, movementTime, createdBy, createdAt);
-        this.toWarehouseCode = toWarehouseCode;
-        this.toWarehouseLabel = toWarehouseLabel;
-        this.customsDocumentType = customsDocumentType;
-        this.customsDocumentRef = customsDocumentRef;
-    }
     @Override
     public MovementType getType() {
         return MovementType.EXIT;

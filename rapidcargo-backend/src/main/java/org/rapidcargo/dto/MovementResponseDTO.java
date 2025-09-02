@@ -1,8 +1,8 @@
 package org.rapidcargo.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.rapidcargo.domain.enums.CustomsStatus;
-import org.rapidcargo.domain.enums.MovementType;
+import org.rapidcargo.enums.CustomsStatus;
+import org.rapidcargo.enums.MovementType;
 
 import java.time.LocalDateTime;
 

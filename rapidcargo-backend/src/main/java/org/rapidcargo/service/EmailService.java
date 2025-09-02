@@ -1,7 +1,7 @@
 package org.rapidcargo.service;
 
-import org.rapidcargo.domain.Movement;
-import org.rapidcargo.domain.exception.BusinessException;
+import org.rapidcargo.Movement;
+import org.rapidcargo.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final JavaMailSender mailSender;
 

@@ -1,7 +1,7 @@
 package org.rapidcargo.repository.entity;
 
 import jakarta.persistence.*;
-import org.rapidcargo.domain.enums.ReferenceType;
+import org.rapidcargo.enums.ReferenceType;
 
 import java.math.BigDecimal;
 

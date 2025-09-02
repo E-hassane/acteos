@@ -2,10 +2,10 @@ package org.rapidcargo.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.rapidcargo.domain.EntryMovement;
-import org.rapidcargo.domain.ExitMovement;
-import org.rapidcargo.domain.Goods;
-import org.rapidcargo.domain.Movement;
+import org.rapidcargo.EntryMovement;
+import org.rapidcargo.ExitMovement;
+import org.rapidcargo.Goods;
+import org.rapidcargo.Movement;
 import org.rapidcargo.dto.EntryMovementRequestDTO;
 import org.rapidcargo.dto.ExitMovementRequestDTO;
 import org.rapidcargo.dto.GoodsDTO;

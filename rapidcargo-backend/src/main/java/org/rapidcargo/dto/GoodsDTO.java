@@ -2,7 +2,7 @@ package org.rapidcargo.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
-import org.rapidcargo.domain.enums.ReferenceType;
+import org.rapidcargo.enums.ReferenceType;
 
 import java.math.BigDecimal;
 
