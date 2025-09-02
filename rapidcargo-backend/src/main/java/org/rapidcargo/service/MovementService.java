@@ -2,7 +2,6 @@ package org.rapidcargo.service;
 
 import org.rapidcargo.domain.EntryMovement;
 import org.rapidcargo.domain.ExitMovement;
-import org.rapidcargo.domain.Goods;
 import org.rapidcargo.domain.Movement;
 import org.rapidcargo.domain.exception.BusinessException;
 import org.rapidcargo.mapper.EntityMapper;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,17 +41,8 @@ public class MovementService {
         this.entityMapper = entityMapper;
     }
 
-    public EntryMovement createEntryMovement(String fromWarehouseCode, String fromWarehouseLabel,
-                                             Goods goods, LocalDateTime movementTime, String createdBy) {
-
-        logger.info("Création entrée pour AWB: {}", goods.getReferenceCode());
-
-        EntryMovement movement = new EntryMovement();
-        movement.setFromWarehouseCode(fromWarehouseCode);
-        movement.setFromWarehouseLabel(fromWarehouseLabel);
-        movement.setGoods(goods);
-        movement.setMovementTime(movementTime);
-        movement.setCreatedBy(createdBy);
+    public EntryMovement createEntryMovement(EntryMovement movement) {
+        logger.info("Création entrée pour AWB: {}", movement.getGoods().getReferenceCode());
 
         validator.validateMovementConsistency(movement);
 
@@ -63,24 +52,12 @@ public class MovementService {
         return (EntryMovement) saved;
     }
 
-    public ExitMovement createExitMovement(String toWarehouseCode, String toWarehouseLabel,
-                                           Goods goods, LocalDateTime movementTime, String createdBy,
-                                           String customsDocumentType, String customsDocumentRef) {
+    public ExitMovement createExitMovement(ExitMovement movement) {
+        logger.info("Création sortie pour AWB: {}", movement.getGoods().getReferenceCode());
 
-        logger.info("Création sortie pour AWB: {}", goods.getReferenceCode());
-
-        if (!validator.hasEntryMovement(goods.getReferenceCode())) {
-            throw new BusinessException("Pas d'entrée trouvée pour " + goods.getReferenceCode());
+        if (!validator.hasEntryMovement(movement.getGoods().getReferenceCode())) {
+            throw new BusinessException("Pas d'entrée trouvée pour " + movement.getGoods().getReferenceCode());
         }
-
-        ExitMovement movement = new ExitMovement();
-        movement.setToWarehouseCode(toWarehouseCode);
-        movement.setToWarehouseLabel(toWarehouseLabel);
-        movement.setGoods(goods);
-        movement.setMovementTime(movementTime);
-        movement.setCreatedBy(createdBy);
-        movement.setCustomsDocumentType(customsDocumentType);
-        movement.setCustomsDocumentRef(customsDocumentRef);
 
         validator.validateMovementConsistency(movement);
 
@@ -119,11 +96,14 @@ public class MovementService {
 
     private Movement saveMovement(Movement movement) {
         try {
+            logger.info("Sauvegarde mouvement pour AWB: {}", movement.getGoods().getReferenceCode());
+
             MovementEntity entity = entityMapper.toEntity(movement);
             MovementEntity saved = repository.save(entity);
+
             return entityMapper.toDomain(saved);
         } catch (Exception e) {
-            logger.error("Erreur sauvegarde: {}", e.getMessage());
+            logger.error("Erreur sauvegarde mouvement: {}", e.getMessage(), e);
             throw new BusinessException("Échec sauvegarde mouvement", e);
         }
     }
