@@ -8,61 +8,45 @@ import org.rapidcargo.domain.exception.BusinessException;
 import org.rapidcargo.mapper.EntityMapper;
 import org.rapidcargo.repository.MovementRepository;
 import org.rapidcargo.repository.entity.MovementEntity;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.springframework.transaction.annotation.Transactional;
-
 @Service
 @Transactional
 public class MovementService {
-    private static final Logger logger = LoggerFactory.getLogger(MovementService.class);
-    private static final int DEFAULT_LATEST_MOVEMENTS_LIMIT = 50;
 
-    private final MovementRepository movementRepository;
-    private final MovementValidationService validationService;
+    private static final Logger logger = LoggerFactory.getLogger(MovementService.class);
+
+    private final MovementRepository repository;
+    private final MovementValidationService validator;
+    private final XmlGeneratorService xmlGenerator;
+    private final EmailService emailService;
     private final EntityMapper entityMapper;
 
-    private final XmlGeneratorService xmlGeneratorService;
-    private final EmailService emailService;
-
-    @Autowired
-    public MovementService(MovementRepository movementRepository,
-                           MovementValidationService validationService,
-                           XmlGeneratorService xmlGeneratorService,
+    public MovementService(MovementRepository repository,
+                           MovementValidationService validator,
+                           XmlGeneratorService xmlGenerator,
                            EmailService emailService,
                            EntityMapper entityMapper) {
-        this.movementRepository = movementRepository;
-        this.validationService = validationService;
-        this.xmlGeneratorService = xmlGeneratorService;
+        this.repository = repository;
+        this.validator = validator;
+        this.xmlGenerator = xmlGenerator;
         this.emailService = emailService;
         this.entityMapper = entityMapper;
     }
 
-    /**
-     *
-     * @param fromWarehouseCode
-     * @param fromWarehouseLabel
-     * @param goods
-     * @param movementTime
-     * @param createdBy
-     * @return
-     */
-    public EntryMovement createEntryMovement(String fromWarehouseCode,
-                                             String fromWarehouseLabel,
-                                             Goods goods,
-                                             LocalDateTime movementTime,
-                                             String createdBy) {
+    public EntryMovement createEntryMovement(String fromWarehouseCode, String fromWarehouseLabel,
+                                             Goods goods, LocalDateTime movementTime, String createdBy) {
 
-        logger.info("Création d'un mouvement d'entrée pour la référence {}", goods.getReferenceCode());
+        logger.info("Création entrée pour AWB: {}", goods.getReferenceCode());
 
         EntryMovement movement = new EntryMovement();
         movement.setFromWarehouseCode(fromWarehouseCode);
@@ -71,44 +55,22 @@ public class MovementService {
         movement.setMovementTime(movementTime);
         movement.setCreatedBy(createdBy);
 
-        validationService.validateMovementConsistency(movement);
+        validator.validateMovementConsistency(movement);
 
-        Movement savedMovement = saveMovement(movement);
+        Movement saved = saveMovement(movement);
+        sendNotificationAsync(saved);
 
-        sendNotificationAsync(savedMovement);
-
-
-        logger.info("Mouvement d'entrée créé avec succès - ID: {}", savedMovement.getId());
-        return (EntryMovement) savedMovement;
+        return (EntryMovement) saved;
     }
 
-    /**
-     *
-     * @param toWarehouseCode
-     * @param toWarehouseLabel
-     * @param goods
-     * @param movementTime
-     * @param createdBy
-     * @param customsDocumentType
-     * @param customsDocumentRef
-     * @return
-     */
-    public ExitMovement createExitMovement(String toWarehouseCode,
-                                           String toWarehouseLabel,
-                                           Goods goods,
-                                           LocalDateTime movementTime,
-                                           String createdBy,
-                                           String customsDocumentType,
-                                           String customsDocumentRef) {
+    public ExitMovement createExitMovement(String toWarehouseCode, String toWarehouseLabel,
+                                           Goods goods, LocalDateTime movementTime, String createdBy,
+                                           String customsDocumentType, String customsDocumentRef) {
 
-        logger.info("Création d'un mouvement de sortie pour la référence {}", goods.getReferenceCode());
+        logger.info("Création sortie pour AWB: {}", goods.getReferenceCode());
 
-        // Vérification de l'existence d'une entrée préalable
-        if (!validationService.hasEntryMovement(goods.getReferenceCode())) {
-            throw new BusinessException(
-                    String.format("Impossible de créer une sortie : aucune entrée trouvée pour la référence %s",
-                            goods.getReferenceCode())
-            );
+        if (!validator.hasEntryMovement(goods.getReferenceCode())) {
+            throw new BusinessException("Pas d'entrée trouvée pour " + goods.getReferenceCode());
         }
 
         ExitMovement movement = new ExitMovement();
@@ -120,79 +82,59 @@ public class MovementService {
         movement.setCustomsDocumentType(customsDocumentType);
         movement.setCustomsDocumentRef(customsDocumentRef);
 
-        validationService.validateMovementConsistency(movement);
+        validator.validateMovementConsistency(movement);
 
-        Movement savedMovement = saveMovement(movement);
+        Movement saved = saveMovement(movement);
+        sendNotificationAsync(saved);
 
-        sendNotificationAsync(savedMovement);
-
-        logger.info("Mouvement de sortie créé avec succès - ID: {}", savedMovement.getId());
-        return (ExitMovement) savedMovement;
+        return (ExitMovement) saved;
     }
 
-    /**
-     *
-     * @param limit
-     * @return
-     */
     @Transactional(readOnly = true)
-    public List<Movement> getLatestMovements(Integer limit) {
-        int effectiveLimit = (limit != null && limit > 0) ? limit : DEFAULT_LATEST_MOVEMENTS_LIMIT;
+    public List<Movement> getLatestMovements() {
+        PageRequest page = PageRequest.of(0, 50, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        logger.debug("Récupération des {} derniers mouvements", effectiveLimit);
-
-        PageRequest pageRequest = PageRequest.of(0, effectiveLimit,
-                Sort.by(Sort.Direction.DESC, "createdAt"));
-
-        return movementRepository.findAll(pageRequest)
+        return repository.findAll(page)
                 .getContent()
                 .stream()
                 .map(entityMapper::toDomain)
                 .collect(Collectors.toList());
     }
 
-    /**
-     *
-     * @param referenceCode
-     * @return
-     */
     @Transactional(readOnly = true)
-    public List<Movement> findMovementsByReference(String referenceCode) {
-        if (referenceCode == null || referenceCode.trim().isEmpty()) {
-            throw new BusinessException("Le code de référence ne peut pas être vide");
-        }
+    public Movement getMovementById(Long id) {
+        MovementEntity entity = repository.findById(id)
+                .orElseThrow(() -> new BusinessException("Mouvement " + id + " introuvable"));
 
-        logger.debug("Recherche des mouvements pour la référence {}", referenceCode);
+        return entityMapper.toDomain(entity);
+    }
 
-        return movementRepository.findByReferenceCode(referenceCode)
+    @Transactional(readOnly = true)
+    public List<Movement> getMovementsByReference(String referenceCode) {
+        return repository.findByReferenceCode(referenceCode)
                 .stream()
                 .map(entityMapper::toDomain)
                 .collect(Collectors.toList());
     }
 
-    /**
-     *
-     * @param movement
-     * @return
-     */
     private Movement saveMovement(Movement movement) {
         try {
             MovementEntity entity = entityMapper.toEntity(movement);
-            MovementEntity savedEntity = movementRepository.save(entity);
-            return entityMapper.toDomain(savedEntity);
+            MovementEntity saved = repository.save(entity);
+            return entityMapper.toDomain(saved);
         } catch (Exception e) {
-            logger.error("Erreur lors de la sauvegarde du mouvement: {}", e.getMessage(), e);
-            throw new BusinessException("Échec de la sauvegarde du mouvement: " + e.getMessage(), e);
+            logger.error("Erreur sauvegarde: {}", e.getMessage());
+            throw new BusinessException("Échec sauvegarde mouvement", e);
         }
     }
 
     private void sendNotificationAsync(Movement movement) {
         try {
-            String xmlContent = xmlGeneratorService.generateCargoMessage(movement);
-            emailService.sendMovementNotification(movement, xmlContent);
+            String xml = xmlGenerator.generateCargoMessage(movement);
+            emailService.sendMovementNotification(movement, xml);
+            logger.debug("Notification envoyée pour mouvement {}", movement.getId());
         } catch (Exception e) {
-            logger.error("Erreur lors de l'envoi de la notification pour le mouvement {}: {}",
-                    movement.getId(), e.getMessage(), e);
+            logger.warn("Échec notification mouvement {}: {}", movement.getId(), e.getMessage());
         }
     }
 }
