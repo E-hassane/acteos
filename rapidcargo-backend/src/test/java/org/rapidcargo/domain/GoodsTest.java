@@ -3,9 +3,8 @@ package org.rapidcargo.domain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeEach;
-import org.rapidcargo.Goods;
-import org.rapidcargo.enums.ReferenceType;
-import org.rapidcargo.exception.BusinessException;
+import org.rapidcargo.domain.enums.ReferenceType;
+import org.rapidcargo.domain.exception.BusinessException;
 
 import java.math.BigDecimal;
 

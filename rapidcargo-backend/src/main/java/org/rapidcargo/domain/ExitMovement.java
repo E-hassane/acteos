@@ -1,7 +1,7 @@
-package org.rapidcargo;
+package org.rapidcargo.domain;
 
-import org.rapidcargo.enums.MovementType;
-import org.rapidcargo.exception.BusinessException;
+import org.rapidcargo.domain.enums.MovementType;
+import org.rapidcargo.domain.exception.BusinessException;
 
 
 public class ExitMovement extends Movement {

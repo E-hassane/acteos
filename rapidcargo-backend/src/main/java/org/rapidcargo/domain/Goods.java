@@ -1,7 +1,7 @@
-package org.rapidcargo;
+package org.rapidcargo.domain;
 
-import org.rapidcargo.enums.ReferenceType;
-import org.rapidcargo.exception.BusinessException;
+import org.rapidcargo.domain.enums.ReferenceType;
+import org.rapidcargo.domain.exception.BusinessException;
 
 import java.math.BigDecimal;
 

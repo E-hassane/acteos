@@ -3,12 +3,9 @@ package org.rapidcargo.domain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeEach;
-import org.rapidcargo.EntryMovement;
-import org.rapidcargo.ExitMovement;
-import org.rapidcargo.Goods;
-import org.rapidcargo.enums.CustomsStatus;
-import org.rapidcargo.enums.ReferenceType;
-import org.rapidcargo.exception.BusinessException;
+import org.rapidcargo.domain.enums.CustomsStatus;
+import org.rapidcargo.domain.enums.ReferenceType;
+import org.rapidcargo.domain.exception.BusinessException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

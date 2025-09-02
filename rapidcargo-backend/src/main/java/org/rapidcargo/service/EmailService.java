@@ -1,7 +1,7 @@
 package org.rapidcargo.service;
 
-import org.rapidcargo.Movement;
-import org.rapidcargo.exception.BusinessException;
+import org.rapidcargo.domain.Movement;
+import org.rapidcargo.domain.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

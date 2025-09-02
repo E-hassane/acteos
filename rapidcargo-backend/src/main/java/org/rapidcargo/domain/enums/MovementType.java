@@ -1,4 +1,4 @@
-package org.rapidcargo.enums;
+package org.rapidcargo.domain.enums;
 
 public enum MovementType {
     ENTRY("Entrée"),
