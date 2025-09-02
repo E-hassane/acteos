@@ -86,10 +86,8 @@ class MovementServiceTest {
     @Test
     @DisplayName("Création d'une sortie sans entrée préalable doit échouer")
     void createExitMovement_WithoutPriorEntry_ShouldFail() {
-        // Given
         when(validator.hasEntryMovement("12345678901")).thenReturn(false);
 
-        // When & Then
         BusinessException exception = assertThrows(
                 BusinessException.class,
                 () -> movementService.createExitMovement(exitMovement)
@@ -103,11 +101,9 @@ class MovementServiceTest {
     @Test
     @DisplayName("Récupération d'un mouvement par ID inexistant doit échouer")
     void getMovementById_WithNonExistentId_ShouldFail() {
-        // Given
         Long movementId = 999L;
         when(repository.findById(movementId)).thenReturn(Optional.empty());
 
-        // When & Then
         BusinessException exception = assertThrows(
                 BusinessException.class,
                 () -> movementService.getMovementById(movementId)
