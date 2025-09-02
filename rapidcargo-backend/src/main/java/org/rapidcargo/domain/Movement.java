@@ -13,7 +13,7 @@ public abstract class Movement {
     private LocalDateTime createdAt;
 
     private final String declaredInCode = "CDGRC1";
-    private final String getDeclaredInLabel = "RapidCargo CDG";
+    private final String declaredInLabel = "RapidCargo CDG";
 
     private Goods goods;
     private CustomsStatus customsStatus;
@@ -93,8 +93,8 @@ public abstract class Movement {
         return declaredInCode;
     }
 
-    public String getGetDeclaredInLabel() {
-        return getDeclaredInLabel;
+    public String getDeclaredInLabel() {
+        return declaredInLabel;
     }
 
     public Goods getGoods() {

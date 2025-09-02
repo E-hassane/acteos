@@ -31,12 +31,19 @@ public class MovementService {
     private final MovementValidationService validationService;
     private final EntityMapper entityMapper;
 
+    private final XmlGeneratorService xmlGeneratorService;
+    private final EmailService emailService;
+
     @Autowired
     public MovementService(MovementRepository movementRepository,
                            MovementValidationService validationService,
+                           XmlGeneratorService xmlGeneratorService,
+                           EmailService emailService,
                            EntityMapper entityMapper) {
         this.movementRepository = movementRepository;
         this.validationService = validationService;
+        this.xmlGeneratorService = xmlGeneratorService;
+        this.emailService = emailService;
         this.entityMapper = entityMapper;
     }
 
@@ -67,6 +74,9 @@ public class MovementService {
         validationService.validateMovementConsistency(movement);
 
         Movement savedMovement = saveMovement(movement);
+
+        sendNotificationAsync(savedMovement);
+
 
         logger.info("Mouvement d'entrée créé avec succès - ID: {}", savedMovement.getId());
         return (EntryMovement) savedMovement;
@@ -113,6 +123,8 @@ public class MovementService {
         validationService.validateMovementConsistency(movement);
 
         Movement savedMovement = saveMovement(movement);
+
+        sendNotificationAsync(savedMovement);
 
         logger.info("Mouvement de sortie créé avec succès - ID: {}", savedMovement.getId());
         return (ExitMovement) savedMovement;
@@ -171,6 +183,16 @@ public class MovementService {
         } catch (Exception e) {
             logger.error("Erreur lors de la sauvegarde du mouvement: {}", e.getMessage(), e);
             throw new BusinessException("Échec de la sauvegarde du mouvement: " + e.getMessage(), e);
+        }
+    }
+
+    private void sendNotificationAsync(Movement movement) {
+        try {
+            String xmlContent = xmlGeneratorService.generateCargoMessage(movement);
+            emailService.sendMovementNotification(movement, xmlContent);
+        } catch (Exception e) {
+            logger.error("Erreur lors de l'envoi de la notification pour le mouvement {}: {}",
+                    movement.getId(), e.getMessage(), e);
         }
     }
 }
