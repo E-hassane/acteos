@@ -5,111 +5,73 @@ import org.rapidcargo.domain.Movement;
 import org.rapidcargo.domain.exception.BusinessException;
 import org.rapidcargo.repository.MovementRepository;
 import org.rapidcargo.repository.entity.MovementEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class MovementValidationService {
-    private final MovementRepository movementRepository;
 
-    @Autowired
-    public MovementValidationService(MovementRepository movementRepository) {
-        this.movementRepository = movementRepository;
+    private final MovementRepository repository;
+
+    public MovementValidationService(MovementRepository repository) {
+        this.repository = repository;
     }
 
-    /**
-     *
-     * @param awbNumber
-     * @param clientCode
-     * @param goodsList
-     */
-    public void validateEntryMovement(String awbNumber, String clientCode,
-                                      List<Goods> goodsList) {
-        validateCommonParameters(awbNumber, clientCode, goodsList);
-
-        validateGoodsList(goodsList);
+    public void validateEntryMovement(String awbNumber, String clientCode, List<Goods> goodsList) {
+        checkBasicParams(awbNumber, clientCode, goodsList);
+        validateGoods(goodsList);
     }
 
-    /**
-     *
-     * @param awbNumber
-     * @param clientCode
-     * @param goodsList
-     */
-    public void validateExitMovement(String awbNumber, String clientCode,
-                                     List<Goods> goodsList) {
-        validateCommonParameters(awbNumber, clientCode, goodsList);
+    public void validateExitMovement(String awbNumber, String clientCode, List<Goods> goodsList) {
+        checkBasicParams(awbNumber, clientCode, goodsList);
 
         if (!hasEntryMovement(awbNumber)) {
-            throw new BusinessException(
-                    String.format("Impossible de créer une sortie : aucune entrée trouvée pour l'AWB %s", awbNumber)
-            );
+            throw new BusinessException("Pas d'entrée trouvée pour l'AWB " + awbNumber);
         }
 
-        validateGoodsList(goodsList);
+        validateGoods(goodsList);
     }
 
-    /**
-     *
-     * @param referenceCode
-     * @return
-     */
-        public boolean hasEntryMovement(String referenceCode) {
+    public boolean hasEntryMovement(String referenceCode) {
         if (referenceCode == null || referenceCode.trim().isEmpty()) {
             return false;
         }
 
-        List<MovementEntity> movements = movementRepository.findByReferenceCode(referenceCode);
+        List<MovementEntity> movements = repository.findByReferenceCode(referenceCode);
         return movements.stream()
                 .anyMatch(movement -> "ENTRY".equals(movement.getClass().getAnnotation(
                         jakarta.persistence.DiscriminatorValue.class).value()));
     }
 
-    /**
-     *
-     * @param awbNumber
-     * @param clientCode
-     * @param goodsList
-     */
-    private void validateCommonParameters(String awbNumber, String clientCode, List<Goods> goodsList) {
-        if (awbNumber == null || awbNumber.trim().isEmpty()) {
-            throw new BusinessException("Le numéro AWB est obligatoire");
-        }
-
-        if (clientCode == null || clientCode.trim().isEmpty()) {
-            throw new BusinessException("Le code client est obligatoire");
-        }
-
-        if (goodsList == null || goodsList.isEmpty()) {
-            throw new BusinessException("Au moins une marchandise doit être déclarée");
-        }
-    }
-
-    /**
-     *
-     * @param goodsList
-     */
-    private void validateGoodsList(List<Goods> goodsList) {
-        for (Goods goods : goodsList) {
-            if (goods == null) {
-                throw new BusinessException("Les informations de marchandise ne peuvent pas être nulles");
-            }
-
-            goods.validate();
-        }
-    }
-
-    /**
-     *
-     * @param movement
-     */
     public void validateMovementConsistency(Movement movement) {
         if (movement == null) {
-            throw new BusinessException("Le mouvement ne peut pas être null");
+            throw new BusinessException("Mouvement null");
         }
 
         movement.validate();
+    }
+
+    private void checkBasicParams(String awbNumber, String clientCode, List<Goods> goodsList) {
+        if (awbNumber == null || awbNumber.trim().isEmpty()) {
+            throw new BusinessException("AWB obligatoire");
+        }
+
+        if (clientCode == null || clientCode.trim().isEmpty()) {
+            throw new BusinessException("Code client obligatoire");
+        }
+
+        if (goodsList == null || goodsList.isEmpty()) {
+            throw new BusinessException("Au moins une marchandise obligatoire");
+        }
+    }
+
+    private void validateGoods(List<Goods> goodsList) {
+        for (Goods goods : goodsList) {
+            if (goods == null) {
+                throw new BusinessException("Marchandise null");
+            }
+            goods.validate();
+        }
     }
 }
