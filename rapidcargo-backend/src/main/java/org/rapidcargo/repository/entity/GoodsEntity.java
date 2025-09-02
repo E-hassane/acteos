@@ -30,6 +30,9 @@ public class GoodsEntity extends BaseEntity {
     @Column(name = "description", length = 255)
     private String description;
 
+    @OneToOne(mappedBy = "goods")
+    private MovementEntity movement;
+
     public GoodsEntity() {}
 
     public ReferenceType getReferenceType() {
@@ -79,5 +82,12 @@ public class GoodsEntity extends BaseEntity {
     }
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public MovementEntity getMovement() {
+        return movement;
+    }
+    public void setMovement(MovementEntity movement) {
+        this.movement = movement;
     }
 }

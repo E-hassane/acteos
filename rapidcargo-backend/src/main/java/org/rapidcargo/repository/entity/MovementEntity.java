@@ -3,6 +3,7 @@ package org.rapidcargo.repository.entity;
 import jakarta.persistence.*;
 import org.rapidcargo.domain.enums.CustomsStatus;
 import org.rapidcargo.domain.enums.MovementType;
+import org.rapidcargo.domain.enums.ReferenceType;
 
 import java.time.LocalDate;
 
@@ -12,8 +13,15 @@ import java.time.LocalDate;
 @DiscriminatorColumn(name = "movement_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class MovementEntity extends BaseEntity {
 
-    @Column(name = "movement_time", nullable = false)
+    @Column(name = "movement_date", nullable = false)
     private LocalDate movementTime;
+
+    @Column(name = "reference_number", nullable = false, length = 50)
+    private String referenceNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reference_type", nullable = false)
+    private ReferenceType referenceType;
 
     @Column(name = "declared_in_code", nullable = false, length = 20)
     private String declaredInCode = "CDGRC1";
@@ -38,6 +46,20 @@ public abstract class MovementEntity extends BaseEntity {
     }
     public void setMovementTime(LocalDate movementTime) {
         this.movementTime = movementTime;
+    }
+
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
+    public ReferenceType getReferenceType() {
+        return referenceType;
+    }
+    public void setReferenceType(ReferenceType referenceType) {
+        this.referenceType = referenceType;
     }
 
     public String getDeclaredInCode() {

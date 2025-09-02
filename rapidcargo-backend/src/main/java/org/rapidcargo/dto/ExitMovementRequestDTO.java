@@ -10,15 +10,15 @@ import org.rapidcargo.domain.enums.CustomsStatus;
 import java.time.LocalDateTime;
 
 public class ExitMovementRequestDTO {
-    @NotBlank(message = "Le code de l'entrepôt d'origine est obligatoire")
-    @Size(max = 20, message = "Le code de l'entrepôt d'origine ne peut pas dépasser 20 caractères")
-    @JsonProperty("fromWarehouseCode")
-    private String fromWarehouseCode;
+    @NotBlank(message = "Le code de l'entrepôt de destination est obligatoire")
+    @Size(max = 20, message = "Le code de l'entrepôt de destination ne peut pas dépasser 20 caractères")
+    @JsonProperty("toWarehouseCode")
+    private String toWarehouseCode;
 
-    @NotBlank(message = "Le libellé de l'entrepôt d'origine est obligatoire")
-    @Size(max = 100, message = "Le libellé de l'entrepôt d'origine ne peut pas dépasser 100 caractères")
-    @JsonProperty("fromWarehouseLabel")
-    private String fromWarehouseLabel;
+    @NotBlank(message = "Le libellé de l'entrepôt de destination est obligatoire")
+    @Size(max = 100, message = "Le libellé de l'entrepôt de destination ne peut pas dépasser 100 caractères")
+    @JsonProperty("toWarehouseLabel")
+    private String toWarehouseLabel;
 
     @NotNull(message = "Les informations de marchandise sont obligatoires")
     @Valid
@@ -33,38 +33,48 @@ public class ExitMovementRequestDTO {
     @JsonProperty("customsStatus")
     private CustomsStatus customsStatus;
 
+    @NotBlank(message = "Le type de document douanier est obligatoire")
+    @JsonProperty("customsDocumentType")
+    private String customsDocumentType;
+
+    @NotBlank(message = "La référence du document douanier est obligatoire")
+    @JsonProperty("customsDocumentRef")
+    private String customsDocumentRef;
+
     @NotBlank(message = "L'utilisateur créateur est obligatoire")
-    @Size(max = 50, message = "L'utilisateur créateur ne peut pas dépasser 50 caractères")
     @JsonProperty("createdBy")
     private String createdBy;
 
     public ExitMovementRequestDTO() {}
 
-    public ExitMovementRequestDTO(String fromWarehouseCode, String fromWarehouseLabel,
+    public ExitMovementRequestDTO(String toWarehouseCode, String toWarehouseLabel,
                                   GoodsDTO goods, LocalDateTime movementTime,
-                                  CustomsStatus customsStatus, String createdBy) {
-        this.fromWarehouseCode = fromWarehouseCode;
-        this.fromWarehouseLabel = fromWarehouseLabel;
+                                  CustomsStatus customsStatus, String customsDocumentType,
+                                  String customsDocumentRef, String createdBy) {
+        this.toWarehouseCode = toWarehouseCode;
+        this.toWarehouseLabel = toWarehouseLabel;
         this.goods = goods;
         this.movementTime = movementTime;
         this.customsStatus = customsStatus;
+        this.customsDocumentType = customsDocumentType;
+        this.customsDocumentRef = customsDocumentRef;
         this.createdBy = createdBy;
     }
 
-    public String getFromWarehouseCode() {
-        return fromWarehouseCode;
+    public String getToWarehouseCode() {
+        return toWarehouseCode;
     }
 
-    public void setFromWarehouseCode(String fromWarehouseCode) {
-        this.fromWarehouseCode = fromWarehouseCode;
+    public void setToWarehouseCode(String toWarehouseCode) {
+        this.toWarehouseCode = toWarehouseCode;
     }
 
-    public String getFromWarehouseLabel() {
-        return fromWarehouseLabel;
+    public String getToWarehouseLabel() {
+        return toWarehouseLabel;
     }
 
-    public void setFromWarehouseLabel(String fromWarehouseLabel) {
-        this.fromWarehouseLabel = fromWarehouseLabel;
+    public void setToWarehouseLabel(String toWarehouseLabel) {
+        this.toWarehouseLabel = toWarehouseLabel;
     }
 
     public GoodsDTO getGoods() {
@@ -91,6 +101,22 @@ public class ExitMovementRequestDTO {
         this.customsStatus = customsStatus;
     }
 
+    public String getCustomsDocumentType() {
+        return customsDocumentType;
+    }
+
+    public void setCustomsDocumentType(String customsDocumentType) {
+        this.customsDocumentType = customsDocumentType;
+    }
+
+    public String getCustomsDocumentRef() {
+        return customsDocumentRef;
+    }
+
+    public void setCustomsDocumentRef(String customsDocumentRef) {
+        this.customsDocumentRef = customsDocumentRef;
+    }
+
     public String getCreatedBy() {
         return createdBy;
     }
@@ -102,11 +128,13 @@ public class ExitMovementRequestDTO {
     @Override
     public String toString() {
         return "ExitMovementRequestDTO{" +
-                "fromWarehouseCode='" + fromWarehouseCode + '\'' +
-                ", fromWarehouseLabel='" + fromWarehouseLabel + '\'' +
+                "toWarehouseCode='" + toWarehouseCode + '\'' +
+                ", toWarehouseLabel='" + toWarehouseLabel + '\'' +
                 ", goods=" + goods +
                 ", movementTime=" + movementTime +
                 ", customsStatus=" + customsStatus +
+                ", customsDocumentType='" + customsDocumentType + '\'' +
+                ", customsDocumentRef='" + customsDocumentRef + '\'' +
                 ", createdBy='" + createdBy + '\'' +
                 '}';
     }
