@@ -1,0 +1,8 @@
+<div *ngIf="notification$ | async as notification" class="notification-container">
+  <div class="alert" [ngClass]="getAlertClass(notification.type)" role="alert">
+    <div class="d-flex justify-content-between align-items-center">
+      <span>{{ notification.message }}</span>
+      <button type="button" class="btn-close" aria-label="Fermer" (click)="closeNotification()"></button>
+    </div>
+  </div>
+</div>

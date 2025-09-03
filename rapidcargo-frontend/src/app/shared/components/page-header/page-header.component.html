@@ -1,0 +1,11 @@
+<div class="page-header">
+  <div class="d-flex align-items-center">
+    <button *ngIf="showBackButton" type="button" class="btn btn-outline-secondary me-3" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i> Retour
+    </button>
+    <div>
+      <h1 class="h3 mb-0">{{ title }}</h1>
+      <p *ngIf="subtitle" class="text-muted mb-0">{{ subtitle }}</p>
+    </div>
+  </div>
+</div>
