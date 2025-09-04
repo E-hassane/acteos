@@ -1,11 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Goods, ReferenceType } from '../models/goods.model';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ValidationService {
 
+  awbFormatValidator(): ValidatorFn {
+    return (control: AbstractControl) => {
+      if (!control.value) return null;
+      
+      const awbPattern = /^\d{11}$/;
+      if (!awbPattern.test(control.value)) {
+        return { awbFormat: true };
+      }
+      
+      return null;
+    };
+  } 
   validateAwbCode(referenceType: ReferenceType, referenceCode: string): string | null {
     if (referenceType === ReferenceType.AWB) {
       if (!/^\d{11}$/.test(referenceCode)) {

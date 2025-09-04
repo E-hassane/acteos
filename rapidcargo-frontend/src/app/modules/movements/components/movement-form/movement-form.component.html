@@ -1,0 +1,308 @@
+<div class="movement-form-container">
+  
+  <div class="card mb-4">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">
+          <i class="fas fa-plus-circle me-2 text-primary"></i>
+          Déclaration de mouvement
+        </h4>
+        <div class="text-muted">
+          Étape {{ currentStep }} sur {{ totalSteps }}
+        </div>
+      </div>
+      
+      <div class="progress mt-3" style="height: 6px;">
+        <div 
+          class="progress-bar bg-primary" 
+          role="progressbar" 
+          [style.width.%]="getProgressPercentage()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form [formGroup]="movementForm" (ngSubmit)="onSubmit()" novalidate>
+    
+    
+    <div *ngIf="currentStep === 1">
+      
+      
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-exchange-alt me-2"></i>
+            Type de mouvement
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="card movement-type-card" 
+                   [class.border-success]="selectedMovementType === 'ENTRY'"
+                   (click)="onMovementTypeChange('ENTRY')"
+                   style="cursor: pointer;">
+                <div class="card-body text-center">
+                  <i class="fas fa-arrow-down fa-3x text-success mb-3"></i>
+                  <h5>Entrée</h5>
+                  <p class="text-muted">Mouvement d'entrée de marchandises</p>
+                  <div class="form-check d-flex justify-content-center">
+                    <input 
+                      type="radio" 
+                      class="form-check-input"
+                      [checked]="selectedMovementType === 'ENTRY'"
+                      (change)="onMovementTypeChange('ENTRY')">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="card movement-type-card"
+                   [class.border-warning]="selectedMovementType === 'EXIT'"
+                   (click)="onMovementTypeChange('EXIT')"
+                   style="cursor: pointer;">
+                <div class="card-body text-center">
+                  <i class="fas fa-arrow-up fa-3x text-warning mb-3"></i>
+                  <h5>Sortie</h5>
+                  <p class="text-muted">Mouvement de sortie de marchandises</p>
+                  <div class="form-check d-flex justify-content-center">
+                    <input 
+                      type="radio" 
+                      class="form-check-input"
+                      [checked]="selectedMovementType === 'EXIT'"
+                      (change)="onMovementTypeChange('EXIT')">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-clock me-2"></i>
+            Informations générales
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            
+            <div class="col-md-6 mb-3">
+              <label for="movementTime" class="form-label">
+                Date et heure du mouvement <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="datetime-local"
+                id="movementTime"
+                class="form-control"
+                formControlName="movementTime"
+                [class.is-invalid]="hasFieldError('movementTime')">
+              <div class="invalid-feedback" *ngIf="hasFieldError('movementTime')">
+                {{ getFieldErrorMessage('movementTime') }}
+              </div>
+            </div>
+
+            
+            <div class="col-md-6 mb-3">
+              <label for="customsStatus" class="form-label">
+                Statut douanier <span class="text-danger">*</span>
+              </label>
+              <select 
+                id="customsStatus"
+                class="form-select"
+                formControlName="customsStatus"
+                [class.is-invalid]="hasFieldError('customsStatus')">
+                <option value="">Sélectionner un statut</option>
+                <option *ngFor="let option of customsStatusOptions" [value]="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="hasFieldError('customsStatus')">
+                {{ getFieldErrorMessage('customsStatus') }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card mb-4" *ngIf="selectedMovementType === 'ENTRY'">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            <i class="fas fa-warehouse me-2"></i>
+            Informations d'entrée
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="fromWarehouseCode" class="form-label">
+                Magasin d'origine <span class="text-danger">*</span>
+              </label>
+              <select 
+                id="fromWarehouseCode"
+                class="form-select"
+                formControlName="fromWarehouseCode"
+                [class.is-invalid]="hasFieldError('fromWarehouseCode')"
+                (change)="onWarehouseChange($event, 'from')">
+                <option value="">Sélectionner un entrepôt</option>
+                <option *ngFor="let warehouse of warehouseOptions" [value]="warehouse.code">
+                  {{ warehouse.code }} - {{ warehouse.label }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="hasFieldError('fromWarehouseCode')">
+                {{ getFieldErrorMessage('fromWarehouseCode') }}
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="fromWarehouseLabel" class="form-label">
+                Libellé de l'entrepôt <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text"
+                id="fromWarehouseLabel"
+                class="form-control"
+                formControlName="fromWarehouseLabel"
+                placeholder="Libellé automatique"
+                readonly>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card mb-4" *ngIf="selectedMovementType === 'EXIT'">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0">
+            <i class="fas fa-truck me-2"></i>
+            Informations de sortie
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="toWarehouseCode" class="form-label">
+                Magasin de destination <span class="text-danger">*</span>
+              </label>
+              <select 
+                id="toWarehouseCode"
+                class="form-select"
+                formControlName="toWarehouseCode"
+                [class.is-invalid]="hasFieldError('toWarehouseCode')"
+                (change)="onWarehouseChange($event, 'to')">
+                <option value="">Sélectionner un entrepôt</option>
+                <option *ngFor="let warehouse of warehouseOptions" [value]="warehouse.code">
+                  {{ warehouse.code }} - {{ warehouse.label }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="hasFieldError('toWarehouseCode')">
+                {{ getFieldErrorMessage('toWarehouseCode') }}
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="toWarehouseLabel" class="form-label">
+                Libellé de l'entrepôt <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text"
+                id="toWarehouseLabel"
+                class="form-control"
+                formControlName="toWarehouseLabel"
+                placeholder="Libellé automatique"
+                readonly>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="customsDocumentType" class="form-label">
+                Type de document douanier <span class="text-danger">*</span>
+              </label>
+              <select 
+                id="customsDocumentType"
+                class="form-select"
+                formControlName="customsDocumentType"
+                [class.is-invalid]="hasFieldError('customsDocumentType')">
+                <option value="">Sélectionner un type</option>
+                <option *ngFor="let doc of documentTypes" [value]="doc.value">
+                  {{ doc.label }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="hasFieldError('customsDocumentType')">
+                {{ getFieldErrorMessage('customsDocumentType') }}
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="customsDocumentRef" class="form-label">
+                Référence du document <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text"
+                id="customsDocumentRef"
+                class="form-control"
+                formControlName="customsDocumentRef"
+                placeholder="Référence du document douanier"
+                [class.is-invalid]="hasFieldError('customsDocumentRef')">
+              <div class="invalid-feedback" *ngIf="hasFieldError('customsDocumentRef')">
+                {{ getFieldErrorMessage('customsDocumentRef') }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
+          <i class="fas fa-times me-2"></i>
+          Annuler
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary"
+          [disabled]="!canProceedToNextStep()"
+          (click)="nextStep()">
+          Suivant
+          <i class="fas fa-arrow-right ms-2"></i>
+        </button>
+      </div>
+    </div>
+
+    
+    <div *ngIf="currentStep === 2">
+      
+      
+      <app-goods-form 
+        [initialGoods]="currentGoods || undefined"
+        (goodsChange)="onGoodsChange($event)"
+        (validChange)="onGoodsValidChange($event)">
+      </app-goods-form>
+
+      
+      <div class="d-flex justify-content-between mt-4">
+        <button type="button" class="btn btn-outline-secondary" (click)="previousStep()">
+          <i class="fas fa-arrow-left me-2"></i>
+          Précédent
+        </button>
+        <div>
+          <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()">
+            <i class="fas fa-times me-2"></i>
+            Annuler
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-success"
+            [disabled]="!canSubmit() || isSubmitting">
+            <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+            <i *ngIf="!isSubmitting" class="fas fa-paper-plane me-2"></i>
+            {{ isSubmitting ? 'Envoi en cours...' : 'Déclarer le mouvement' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+

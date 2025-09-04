@@ -1,4 +1,5 @@
 import { Goods } from './goods.model';
+import { environment } from '../../../environments/environment';
 
 export enum MovementType {
   ENTRY = 'ENTRY',
@@ -59,6 +60,7 @@ export class EntryMovementRequest {
   fromWarehouseLabel: string = '';
   goods: Goods = new Goods();
   customsStatus: CustomsStatus = CustomsStatus.X;
+  createdBy: string = environment.defaultUser;
 
   constructor(data: Partial<EntryMovementRequest> = {}) {
     Object.assign(this, data);
@@ -76,6 +78,7 @@ export class ExitMovementRequest {
   customsStatus: CustomsStatus = CustomsStatus.X;
   customsDocumentType: string = '';
   customsDocumentRef: string = '';
+  createdBy: string = environment.defaultUser;
 
   constructor(data: Partial<ExitMovementRequest> = {}) {
     Object.assign(this, data);

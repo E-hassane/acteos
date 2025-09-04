@@ -1,0 +1,52 @@
+<div class="movement-table-container">
+  <div *ngIf="loading" class="text-center p-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && movements.length === 0" class="text-center p-4 text-muted">
+    <i class="fas fa-inbox fa-2x mb-3"></i>
+    <p>Aucun mouvement trouvé</p>
+  </div>
+
+  <div *ngIf="!loading && movements.length > 0" class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Horodatage</th>
+          <th>Type</th>
+          <th>De</th>
+          <th>Vers</th>
+          <th>Référence</th>
+          <th>Quantité</th>
+          <th>Poids</th>
+          <th>Statut douanier</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let movement of movements">
+          <td class="text-nowrap">
+            {{ formatMovementDate(movement.movementTime) }}
+          </td>
+          <td>
+            <span class="badge" [ngClass]="getMovementTypeClass(movement.type)">
+              {{ getMovementTypeLabel(movement.type) }}
+            </span>
+          </td>
+          <td>{{ getOriginWarehouse(movement) }}</td>
+          <td>{{ getDestinationWarehouse(movement) }}</td>
+          <td>
+            <strong>{{ formatReferenceCode(movement.goods.referenceCode) }}</strong>
+          </td>
+          <td class="text-end">{{ movement.goods.quantity }}</td>
+          <td class="text-end">{{ formatWeight(movement.goods.weight) }}</td>
+          <td class="text-center">
+            <span class="badge bg-secondary">{{ movement.customsStatus }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+

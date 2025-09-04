@@ -1,0 +1,51 @@
+<div class="movement-list-page">
+  
+  <div class="header">
+    <div>
+      <h2>Historique des mouvements</h2>
+      <p>Derniers mouvements de marchandises déclarés</p>
+    </div>
+    <div>
+      <button 
+        type="button" 
+        class="btn-refresh"
+        (click)="onRefresh()"
+        [disabled]="isLoading">
+        Actualiser
+      </button>
+      <a 
+        routerLink="/movements/create" 
+        class="btn-primary">
+        Nouveau mouvement
+      </a>
+    </div>
+  </div>
+
+  <div class="error" *ngIf="error && !isLoading">
+    {{ error }}
+    <button type="button" class="btn-retry" (click)="onRefresh()">
+      Réessayer
+    </button>
+  </div>
+
+  <div class="table-container" *ngIf="!isLoading && !error">
+    <h3>Liste des mouvements</h3>
+    <app-movement-table 
+      [movements]="movements"
+      [loading]="isLoading">
+    </app-movement-table>
+  </div>
+
+  <div class="no-data" *ngIf="!isLoading && movements.length === 0 && !error">
+    <p>Aucun mouvement trouvé</p>
+    <a routerLink="/movements/create" class="btn-primary">
+      Créer un mouvement
+    </a>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+</div>
+

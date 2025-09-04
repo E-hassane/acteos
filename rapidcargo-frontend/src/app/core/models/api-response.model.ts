@@ -6,6 +6,7 @@ export class MovementResponse {
   createdBy: string = '';
   createdAt: string = '';
   type: string = '';
+  declarationDate: string = '';
   declaredInCode: string = '';
   declaredInLabel: string = '';
   goods: Goods = new Goods();
