@@ -1,8 +1,9 @@
-<div *ngIf="loading$ | async" class="loading-overlay">
+<div *ngIf="(loading$ | async) || show" class="loading-overlay">
   <div class="loading-spinner">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Chargement...</span>
+    <div class="spinner-border text-primary" [ngClass]="getSizeClass()" role="status">
+      <span class="visually-hidden">{{ message }}</span>
     </div>
-    <p class="mt-2">Chargement en cours...</p>
+    <p class="mt-2" *ngIf="message">{{ message }}</p>
   </div>
 </div>
+

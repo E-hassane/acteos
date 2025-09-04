@@ -1,0 +1,192 @@
+<div class="goods-form-container">
+  <form [formGroup]="goodsForm" novalidate>
+    
+    
+    <div class="card mb-4">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="fas fa-barcode me-2"></i>
+          Référence de la marchandise
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          
+          <div class="col-md-4 mb-3">
+            <label for="referenceType" class="form-label">
+              Type de référence <span class="text-danger">*</span>
+            </label>
+            <select 
+              id="referenceType" 
+              class="form-select"
+              formControlName="referenceType"
+              [class.is-invalid]="hasFieldError('referenceType', 'required')">
+              <option value="">Sélectionner un type</option>
+              <option *ngFor="let type of referenceTypes" [value]="type">
+                {{ getReferenceTypeLabel(type) }}
+              </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="hasFieldError('referenceType', 'required')">
+              {{ getFieldErrorMessage('referenceType') }}
+            </div>
+          </div>
+
+          
+          <div class="col-md-8 mb-3">
+            <label for="referenceCode" class="form-label">
+              Code de référence <span class="text-danger">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="referenceCode"
+              class="form-control"
+              formControlName="referenceCode"
+              placeholder="Ex: 12345678901 (11 chiffres pour AWB)"
+              [class.is-invalid]="hasFieldError('referenceCode', 'required') || hasFieldError('referenceCode', 'awbFormat')">
+            <div class="invalid-feedback" *ngIf="goodsForm.get('referenceCode')?.invalid && goodsForm.get('referenceCode')?.touched">
+              {{ getFieldErrorMessage('referenceCode') }}
+            </div>
+            <div class="form-text">
+              Pour un AWB, saisissez exactement 11 chiffres
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="mb-3">
+          <label for="description" class="form-label">
+            Nature de la marchandise <span class="text-danger">*</span>
+          </label>
+          <textarea 
+            id="description"
+            class="form-control"
+            formControlName="description"
+            rows="3"
+            placeholder="Décrivez la nature de la marchandise..."
+            [class.is-invalid]="hasFieldError('description', 'required')">
+          </textarea>
+          <div class="invalid-feedback" *ngIf="hasFieldError('description', 'required')">
+            {{ getFieldErrorMessage('description') }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="card">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="fas fa-weight-hanging me-2"></i>
+          Quantités et poids
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          
+          <div class="col-md-6 mb-3">
+            <label for="quantity" class="form-label">
+              Quantité <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+              <input 
+                type="number" 
+                id="quantity"
+                class="form-control"
+                formControlName="quantity"
+                min="1"
+                step="1"
+                [class.is-invalid]="hasFieldError('quantity', 'required') || hasFieldError('quantity', 'min')">
+              <span class="input-group-text">pièces</span>
+            </div>
+            <div class="invalid-feedback" *ngIf="goodsForm.get('quantity')?.invalid && goodsForm.get('quantity')?.touched">
+              {{ getFieldErrorMessage('quantity') }}
+            </div>
+          </div>
+
+          
+          <div class="col-md-6 mb-3">
+            <label for="weight" class="form-label">
+              Poids <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+              <input 
+                type="number" 
+                id="weight"
+                class="form-control"
+                formControlName="weight"
+                min="0.01"
+                step="0.01"
+                [class.is-invalid]="hasFieldError('weight', 'required') || hasFieldError('weight', 'min')">
+              <span class="input-group-text">kg</span>
+            </div>
+            <div class="invalid-feedback" *ngIf="goodsForm.get('weight')?.invalid && goodsForm.get('weight')?.touched">
+              {{ getFieldErrorMessage('weight') }}
+            </div>
+          </div>
+
+          
+          <div class="col-md-6 mb-3">
+            <label for="totalRefQuantity" class="form-label">
+              Quantité totale <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+              <input 
+                type="number" 
+                id="totalRefQuantity"
+                class="form-control"
+                formControlName="totalRefQuantity"
+                min="1"
+                step="1"
+                [class.is-invalid]="hasFieldError('totalRefQuantity', 'required') || hasFieldError('totalRefQuantity', 'min')">
+              <span class="input-group-text">pièces</span>
+            </div>
+            <div class="invalid-feedback" *ngIf="goodsForm.get('totalRefQuantity')?.invalid && goodsForm.get('totalRefQuantity')?.touched">
+              {{ getFieldErrorMessage('totalRefQuantity') }}
+            </div>
+            <div class="form-text text-muted">
+              Quantité totale de la référence dans l'entrepôt
+            </div>
+          </div>
+
+          
+          <div class="col-md-6 mb-3">
+            <label for="totalRefWeight" class="form-label">
+              Poids total <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+              <input 
+                type="number" 
+                id="totalRefWeight"
+                class="form-control"
+                formControlName="totalRefWeight"
+                min="0.01"
+                step="0.01"
+                [class.is-invalid]="hasFieldError('totalRefWeight', 'required') || hasFieldError('totalRefWeight', 'min')">
+              <span class="input-group-text">kg</span>
+            </div>
+            <div class="invalid-feedback" *ngIf="goodsForm.get('totalRefWeight')?.invalid && goodsForm.get('totalRefWeight')?.touched">
+              {{ getFieldErrorMessage('totalRefWeight') }}
+            </div>
+            <div class="form-text text-muted">
+              Poids total de la référence dans l'entrepôt
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="alert alert-info" *ngIf="goodsForm.get('quantity')?.value && goodsForm.get('totalRefQuantity')?.value">
+          <i class="fas fa-info-circle me-2"></i>
+          <strong>Règle métier :</strong> 
+          Les totaux doivent être supérieurs ou égaux aux valeurs du mouvement.
+          <br>
+          <small>
+            Mouvement : {{ goodsForm.get('quantity')?.value }} pièces, {{ goodsForm.get('weight')?.value }} kg
+            | Total : {{ goodsForm.get('totalRefQuantity')?.value }} pièces, {{ goodsForm.get('totalRefWeight')?.value }} kg
+          </small>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+
